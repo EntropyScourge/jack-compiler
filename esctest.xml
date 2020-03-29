@@ -1,0 +1,287 @@
+<class>
+  <keyword>class</keyword>
+  <identifier kind=class>thing</identifier>
+  <symbol>{</symbol>
+  <classVarDec>
+    <keyword>field</keyword>
+    <keyword>int</keyword>
+    <identifier kind=field>a</identifier>
+    <symbol>,</symbol>
+    <identifier kind=field>b</identifier>
+    <symbol>;</symbol>
+  </classVarDec>
+  <subroutineDec>
+    <keyword>method</keyword>
+    <keyword>void</keyword>
+    <identifier kind=subroutine>CallSub</identifier>
+    <symbol>(</symbol>
+    <parameterList>
+      <keyword>int</keyword>
+      <identifier kind=argument>x</identifier>
+      <symbol>,</symbol>
+      <keyword>char</keyword>
+      <identifier kind=argument>y</identifier>
+      <symbol>,</symbol>
+      <keyword>boolean</keyword>
+      <identifier kind=argument>h</identifier>
+      <symbol>,</symbol>
+      <keyword>int</keyword>
+      <identifier kind=argument>l</identifier>
+      <symbol>,</symbol>
+      <identifier kind=object>otherType</identifier>
+      <identifier kind=argument>q</identifier>
+    </parameterList>
+    <symbol>)</symbol>
+    <subroutineBody>
+      <symbol>{</symbol>
+      <varDec>
+        <keyword>var</keyword>
+        <keyword>int</keyword>
+        <identifier kind=local>u</identifier>
+        <symbol>,</symbol>
+        <identifier kind=local>v</identifier>
+        <symbol>;</symbol>
+      </varDec>
+      <varDec>
+        <keyword>var</keyword>
+        <identifier kind=local>string</identifier>
+        <identifier kind=local>a</identifier>
+        <symbol>,</symbol>
+        <identifier kind=local>b</identifier>
+        <symbol>;</symbol>
+      </varDec>
+      <statements>
+        <doStatement>
+          <keyword>do</keyword>
+          <identifier kind=>stuffff</identifier>
+          <symbol>.</symbol>
+          <identifier kind=>stuffff</identifier>
+          <symbol>(</symbol>
+          <expressionList>
+          </expressionList>
+          <symbol>)</symbol>
+          <symbol>;</symbol>
+        </doStatement>
+        <letStatement>
+        <keyword> let </keyword>
+          <identifier kind=>u</identifier>
+          <symbol>=</symbol>
+          <expression>
+            <term>
+              <integerConstant>6</integerConstant>
+            </term>
+          </expression>
+          <symbol>;</symbol>
+        </letStatement>
+        <letStatement>
+        <keyword> let </keyword>
+          <identifier kind=>v</identifier>
+          <symbol>=</symbol>
+          <expression>
+            <term>
+              <integerConstant>10</integerConstant>
+            </term>
+          </expression>
+          <symbol>;</symbol>
+        </letStatement>
+        <letStatement>
+        <keyword> let </keyword>
+          <identifier kind=>a</identifier>
+          <symbol>=</symbol>
+          <expression>
+            <term>
+              <stringConstant>lol</stringConstant>
+            </term>
+          </expression>
+          <symbol>;</symbol>
+        </letStatement>
+        <ifStatement>
+          <keyword> if </keyword>
+          <symbol>(</symbol>
+          <expression>
+            <term>
+              <identifier kind=>u</identifier>
+            </term>
+            <symbol>=</symbol>
+            <term>
+              <integerConstant>10</integerConstant>
+            </term>
+          </expression>
+          <symbol>)</symbol>
+          <symbol>{</symbol>
+          <statements>
+            <doStatement>
+              <keyword>do</keyword>
+              <identifier kind=>CallAnotherSub</identifier>
+              <symbol>(</symbol>
+              <expressionList>
+                <expression>
+                  <term>
+                    <identifier kind=>u</identifier>
+                  </term>
+                  <symbol>+</symbol>
+                  <term>
+                    <integerConstant>4</integerConstant>
+                  </term>
+                </expression>
+                <symbol>,</symbol>
+                <expression>
+                  <term>
+                    <identifier kind=>v</identifier>
+                  </term>
+                </expression>
+              </expressionList>
+              <symbol>)</symbol>
+              <symbol>;</symbol>
+            </doStatement>
+          </statements>
+          <symbol>}</symbol>
+          <keyword> else </keyword>
+          <symbol>{</symbol>
+          <statements>
+            <doStatement>
+              <keyword>do</keyword>
+              <identifier kind=>AnotherSub</identifier>
+              <symbol>(</symbol>
+              <expressionList>
+                <expression>
+                  <term>
+                    <identifier kind=>a</identifier>
+                  </term>
+                </expression>
+              </expressionList>
+              <symbol>)</symbol>
+              <symbol>;</symbol>
+            </doStatement>
+          </statements>
+          <symbol>}</symbol>
+        </ifStatement>
+        <returnStatement>
+          <keyword>return</keyword>
+          <expression>
+            <term>
+              <identifier kind=>u</identifier>
+            </term>
+            <symbol>+</symbol>
+            <term>
+              <identifier kind=>v</identifier>
+            </term>
+          </expression>
+          <symbol>;</symbol>
+        </returnStatement>
+      </statements>
+      <symbol>}</symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword>function</keyword>
+    <keyword>void</keyword>
+    <identifier kind=subroutine>doSomeMoreStuff</identifier>
+    <symbol>(</symbol>
+    <parameterList>
+      <keyword>char</keyword>
+      <identifier kind=argument>input</identifier>
+      <symbol>,</symbol>
+      <keyword>int</keyword>
+      <identifier kind=argument>i</identifier>
+    </parameterList>
+    <symbol>)</symbol>
+    <subroutineBody>
+      <symbol>{</symbol>
+      <statements>
+        <whileStatement>
+          <keyword> while </keyword>
+          <symbol>(</symbol>
+          <expression>
+            <term>
+              <identifier kind=>i</identifier>
+            </term>
+            <symbol>&lt;</symbol>
+            <term>
+              <integerConstant>10</integerConstant>
+            </term>
+          </expression>
+          <symbol>)</symbol>
+          <symbol>{</symbol>
+          <statements>
+            <letStatement>
+            <keyword> let </keyword>
+              <identifier kind=>i</identifier>
+              <symbol>=</symbol>
+              <expression>
+                <term>
+                  <identifier kind=>i</identifier>
+                </term>
+                <symbol>+</symbol>
+                <term>
+                  <integerConstant>1</integerConstant>
+                </term>
+              </expression>
+              <symbol>;</symbol>
+            </letStatement>
+          </statements>
+          <symbol>}</symbol>
+        </whileStatement>
+        <returnStatement>
+          <keyword>return</keyword>
+          <symbol>;</symbol>
+        </returnStatement>
+      </statements>
+      <symbol>}</symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword>method</keyword>
+    <keyword>int</keyword>
+    <identifier kind=subroutine>noParameters</identifier>
+    <symbol>(</symbol>
+    <parameterList>
+    </parameterList>
+    <symbol>)</symbol>
+    <subroutineBody>
+      <symbol>{</symbol>
+      <varDec>
+        <keyword>var</keyword>
+        <keyword>int</keyword>
+        <identifier kind=local>x</identifier>
+        <symbol>;</symbol>
+      </varDec>
+      <statements>
+        <ifStatement>
+          <keyword> if </keyword>
+          <symbol>(</symbol>
+          <expression>
+            <term>
+              <identifier kind=>gay</identifier>
+            </term>
+          </expression>
+          <symbol>)</symbol>
+          <symbol>{</symbol>
+          <statements>
+            <doStatement>
+              <keyword>do</keyword>
+              <identifier kind=>crime</identifier>
+              <symbol>(</symbol>
+              <expressionList>
+              </expressionList>
+              <symbol>)</symbol>
+              <symbol>;</symbol>
+            </doStatement>
+          </statements>
+          <symbol>}</symbol>
+        </ifStatement>
+        <returnStatement>
+          <keyword>return</keyword>
+          <expression>
+            <term>
+              <identifier kind=>x</identifier>
+            </term>
+          </expression>
+          <symbol>;</symbol>
+        </returnStatement>
+      </statements>
+      <symbol>}</symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <symbol>}</symbol>
+</class>

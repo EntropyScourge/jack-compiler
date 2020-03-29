@@ -1,0 +1,51 @@
+function Main.main 0
+function main 0
+call Keyboard"HOW MANY NUMBERS? " 0
+pop local 1
+push local 1
+call Arraylength 0
+pop local 0
+pop local 2
+label L0
+push local 2
+push local 1
+lt
+not
+if-goto L1
+push local 0
+push local 2
+add
+call Keyboard"ENTER THE NEXT NUMBER: " 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 2
+add
+pop local 2
+goto L0
+label L1
+pop local 2
+pop local 3
+label L1
+push local 2
+push local 1
+lt
+not
+if-goto L2
+push local 3
+push local 0
+push local 2
+add
+pop pointer 1
+push that 0
+add
+pop local 3
+push local 2
+add
+pop local 2
+goto L1
+label L2
+push local 3
+push local 1
+call math.div 2

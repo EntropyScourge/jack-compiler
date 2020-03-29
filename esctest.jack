@@ -1,0 +1,53 @@
+/** Expressionless version of projects/10/Square/Main.jack. */
+
+//fsvszdvzs
+//vfszbz
+//gvfbvfvz
+
+
+//gdgzsghxdzgfxd
+//gszgfdzsg
+
+class thing {
+
+
+    field int a, b;
+    
+    method void CallSub(int x, char y, boolean h, int l, otherType q) {
+        var int u, v;
+        var string a, b;
+
+  do stuffff.stuffff();       
+//another comment
+    //will it recognise that this is another comment?
+    //or this?
+
+  
+        let u = 6; //will it recognise that "this is not a string"?
+        let v = 10;
+        let a = "lol"; //yet another
+        if (u = 10) {
+            do CallAnotherSub(u + 4,v); // will this work? gf
+        }
+        else {
+            do AnotherSub(a);
+        }
+        return u + v;
+    }
+
+    function void doSomeMoreStuff(char input, int i) {
+        while (i < 10) {
+            let i = i + 1;
+        }
+        return;
+    }
+    
+    method int noParameters() {
+        var int x;
+        if (gay) {
+            do crime();
+        }
+        return x;
+    }
+}
+

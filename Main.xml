@@ -1,0 +1,286 @@
+<class>
+  <keyword>class</keyword>
+  <identifier kind=class>Main</identifier>
+  <symbol>{</symbol>
+  <subroutineDec>
+    <keyword>function</keyword>
+    <keyword>void</keyword>
+    <identifier kind=subroutine>main</identifier>
+    <symbol>(</symbol>
+    <parameterList>
+    </parameterList>
+    <symbol>)</symbol>
+    <subroutineBody>
+      <symbol>{</symbol>
+      <varDec>
+        <keyword>var</keyword>
+        <identifier kind=class>Array</identifier>
+        <identifier kind=local index=0>a</identifier>
+        <symbol>;</symbol>
+      </varDec>
+      <varDec>
+        <keyword>var</keyword>
+        <keyword>int</keyword>
+        <identifier kind=local index=1>length</identifier>
+        <symbol>;</symbol>
+      </varDec>
+      <varDec>
+        <keyword>var</keyword>
+        <keyword>int</keyword>
+        <identifier kind=local index=2>i</identifier>
+        <symbol>,</symbol>
+        <identifier kind=local index=3>sum</identifier>
+        <symbol>;</symbol>
+      </varDec>
+      <statements>
+        <letStatement>
+        <keyword> let </keyword>
+          <identifier kind=local index=1>length</identifier>
+          <symbol>=</symbol>
+          <expression>
+            <term>
+              <identifier kind=class>Keyboard</identifier>
+              <symbol>.</symbol>
+              <identifier kind=subroutine>readInt</identifier>
+              <symbol>(</symbol>
+              <expressionList>
+                <expression>
+                  <term>
+                    <stringConstant>"HOW MANY NUMBERS? "</stringConstant>
+                  </term>
+                </expression>
+              </expressionList>
+              <symbol>)</symbol>
+            </term>
+          </expression>
+          <symbol>;</symbol>
+        </letStatement>
+        <letStatement>
+        <keyword> let </keyword>
+          <identifier kind=local index=0>a</identifier>
+          <symbol>=</symbol>
+          <expression>
+            <term>
+              <identifier kind=class>Array</identifier>
+              <symbol>.</symbol>
+              <identifier kind=subroutine>new</identifier>
+              <symbol>(</symbol>
+              <expressionList>
+                <expression>
+                  <term>
+                    <identifier kind=local index=1>length</identifier>
+                  </term>
+                </expression>
+              </expressionList>
+              <symbol>)</symbol>
+            </term>
+          </expression>
+          <symbol>;</symbol>
+        </letStatement>
+        <letStatement>
+        <keyword> let </keyword>
+          <identifier kind=local index=2>i</identifier>
+          <symbol>=</symbol>
+          <expression>
+            <term>
+              <integerConstant>0</integerConstant>
+            </term>
+          </expression>
+          <symbol>;</symbol>
+        </letStatement>
+        <whileStatement>
+          <keyword> while </keyword>
+          <symbol>(</symbol>
+          <expression>
+            <term>
+              <identifier kind=local index=2>i</identifier>
+            </term>
+            <symbol>&lt;</symbol>
+            <term>
+              <identifier kind=local index=1>length</identifier>
+            </term>
+          </expression>
+          <symbol>)</symbol>
+          <symbol>{</symbol>
+          <statements>
+            <letStatement>
+            <keyword> let </keyword>
+              <identifier kind=local index=0>a</identifier>
+              <symbol>[</symbol>
+              <expression>
+                <term>
+                  <identifier kind=local index=2>i</identifier>
+                </term>
+              </expression>
+              <symbol>]</symbol>
+              <symbol>=</symbol>
+              <expression>
+                <term>
+                  <identifier kind=class>Keyboard</identifier>
+                  <symbol>.</symbol>
+                  <identifier kind=subroutine>readInt</identifier>
+                  <symbol>(</symbol>
+                  <expressionList>
+                    <expression>
+                      <term>
+                        <stringConstant>"ENTER THE NEXT NUMBER: "</stringConstant>
+                      </term>
+                    </expression>
+                  </expressionList>
+                  <symbol>)</symbol>
+                </term>
+              </expression>
+              <symbol>;</symbol>
+            </letStatement>
+            <letStatement>
+            <keyword> let </keyword>
+              <identifier kind=local index=2>i</identifier>
+              <symbol>=</symbol>
+              <expression>
+                <term>
+                  <identifier kind=local index=2>i</identifier>
+                </term>
+                <symbol>+</symbol>
+                <term>
+                  <integerConstant>1</integerConstant>
+                </term>
+              </expression>
+              <symbol>;</symbol>
+            </letStatement>
+          </statements>
+          <symbol>}</symbol>
+        </whileStatement>
+        <letStatement>
+        <keyword> let </keyword>
+          <identifier kind=local index=2>i</identifier>
+          <symbol>=</symbol>
+          <expression>
+            <term>
+              <integerConstant>0</integerConstant>
+            </term>
+          </expression>
+          <symbol>;</symbol>
+        </letStatement>
+        <letStatement>
+        <keyword> let </keyword>
+          <identifier kind=local index=3>sum</identifier>
+          <symbol>=</symbol>
+          <expression>
+            <term>
+              <integerConstant>0</integerConstant>
+            </term>
+          </expression>
+          <symbol>;</symbol>
+        </letStatement>
+        <whileStatement>
+          <keyword> while </keyword>
+          <symbol>(</symbol>
+          <expression>
+            <term>
+              <identifier kind=local index=2>i</identifier>
+            </term>
+            <symbol>&lt;</symbol>
+            <term>
+              <identifier kind=local index=1>length</identifier>
+            </term>
+          </expression>
+          <symbol>)</symbol>
+          <symbol>{</symbol>
+          <statements>
+            <letStatement>
+            <keyword> let </keyword>
+              <identifier kind=local index=3>sum</identifier>
+              <symbol>=</symbol>
+              <expression>
+                <term>
+                  <identifier kind=local index=3>sum</identifier>
+                </term>
+                <symbol>+</symbol>
+                <term>
+                  <identifier kind=Array>a</identifier>
+                  <symbol>[</symbol>
+                  <expression>
+                    <term>
+                      <identifier kind=local index=2>i</identifier>
+                    </term>
+                  </expression>
+                  <symbol>]</symbol>
+                </term>
+              </expression>
+              <symbol>;</symbol>
+            </letStatement>
+            <letStatement>
+            <keyword> let </keyword>
+              <identifier kind=local index=2>i</identifier>
+              <symbol>=</symbol>
+              <expression>
+                <term>
+                  <identifier kind=local index=2>i</identifier>
+                </term>
+                <symbol>+</symbol>
+                <term>
+                  <integerConstant>1</integerConstant>
+                </term>
+              </expression>
+              <symbol>;</symbol>
+            </letStatement>
+          </statements>
+          <symbol>}</symbol>
+        </whileStatement>
+        <doStatement>
+          <keyword>do</keyword>
+          <identifier kind=class>Output</identifier>
+          <symbol>.</symbol>
+          <identifier kind=subroutine>printString</identifier>
+          <symbol>(</symbol>
+          <expressionList>
+            <expression>
+              <term>
+                <stringConstant>"THE AVERAGE IS: "</stringConstant>
+              </term>
+            </expression>
+          </expressionList>
+          <symbol>)</symbol>
+          <symbol>;</symbol>
+        </doStatement>
+        <doStatement>
+          <keyword>do</keyword>
+          <identifier kind=class>Output</identifier>
+          <symbol>.</symbol>
+          <identifier kind=subroutine>printInt</identifier>
+          <symbol>(</symbol>
+          <expressionList>
+            <expression>
+              <term>
+                <identifier kind=local index=3>sum</identifier>
+              </term>
+              <symbol>/</symbol>
+              <term>
+                <identifier kind=local index=1>length</identifier>
+              </term>
+            </expression>
+          </expressionList>
+          <symbol>)</symbol>
+          <symbol>;</symbol>
+        </doStatement>
+        <doStatement>
+          <keyword>do</keyword>
+          <identifier kind=class>Output</identifier>
+          <symbol>.</symbol>
+          <identifier kind=subroutine>println</identifier>
+          <symbol>(</symbol>
+          <expressionList>
+          </expressionList>
+          <symbol>)</symbol>
+          <symbol>;</symbol>
+        </doStatement>
+        <returnStatement>
+          <keyword>return</keyword>
+          <symbol>;</symbol>
+        </returnStatement>
+      </statements>
+      <symbol>}</symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <symbol>}</symbol>
+</class>

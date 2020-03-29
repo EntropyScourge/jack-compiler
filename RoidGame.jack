@@ -1,0 +1,69 @@
+class RoidGame {
+    field Ship ship;
+    field int direction;
+    field Array missiles;
+
+    constructor RoidGame new() {
+        let ship = Ship.new(240, 110);
+        let direction = 0;
+        return this;
+    }
+
+    method void dispose() {
+        do ship.killShip();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void run() {
+        var char key;
+        var boolean exit, fired;
+        var int i , j;
+        let exit = false;
+        let missiles = Array.new(20);
+        let i = 0;
+        let j = 0;
+        while (i < 20) {
+            let missiles[i] = false;
+            let i = i + 1;
+        }
+    
+        while (~exit) {
+            while (key = 0) {
+                let key = Keyboard.keyPressed();
+                do ship.flyShip();
+            }
+            if (key = 81) {let exit = true; }
+            if (key = 32) {
+                let i = 0;
+                if (fired = false) {
+                    if (missiles[i] = false) {
+                        let missiles[i] = ship.getX();
+                        let missiles[i+1] = ship.getY();
+                        let missiles[i+2] = ship.getVX();
+                        let missiles[i+3] = ship.getVY();
+                        let fired = true;
+                    }
+                }
+                let i = i + 4;
+            }
+
+            while (~(key = 0)) {
+                let key = Keyboard.keyPressed();
+                if (key = 131) {do ship.speedUp(); }
+                if (key = 130) {do ship.rotateLeft(); }
+                if (key = 132) {do ship.rotateRight(); }
+                do ship.flyShip();
+            }
+            let j = 0;
+            while (j < 17) {
+                let missile[j+2] = missile[j+2] + 1;
+                let missile[j+3] = missile[j+3] + 1;
+                do Screen.setColor(true);
+                do Screen.drawPixel(missile[j], missile[j+1]);
+                let j = j + 4;
+            }
+        }
+        return;
+    }
+}

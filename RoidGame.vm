@@ -1,0 +1,211 @@
+function new 0
+call Ship.new 1
+pop field 0
+pop field 1
+return
+function dispose 0
+call ship.killShip 0
+call Memory.deAlloc 0
+return
+function run 0
+pop local 1
+call Array.new 0
+pop field 2
+pop local 3
+pop local 4
+label L0
+push local 3
+lt
+not
+if-goto L1
+push field 2
+push local 3
+add
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 3
+add
+pop local 3
+goto L0
+label L1
+label L1
+push local 1
+not
+not
+if-goto L2
+label L2
+push local 0
+eq
+not
+if-goto L3
+call Keyboard.keyPressed 0
+pop local 0
+call ship.flyShip 0
+goto L2
+label L3
+push local 0
+eq
+not
+if-goto L3
+push constant 1
+neg
+pop local 1
+goto L4
+label L3
+push local 0
+eq
+not
+if-goto L4
+pop local 3
+push local 2
+eq
+not
+if-goto L5
+push local 2
+push local 3
+add
+pop pointer 1
+push that 0
+eq
+not
+if-goto L6
+push field 2
+push local 3
+add
+call ship.getX 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push field 2
+push local 3
+add
+add
+call ship.getY 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push field 2
+push local 3
+add
+add
+call ship.getVX 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push field 2
+push local 3
+add
+add
+call ship.getVY 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 1
+neg
+pop local 2
+goto L7
+label L6
+goto L6
+label L5
+push local 3
+add
+pop local 3
+goto L5
+label L4
+label L7
+push local 0
+eq
+not
+not
+if-goto L8
+call Keyboard.keyPressed 0
+pop local 0
+push local 0
+eq
+not
+if-goto L8
+call ship.speedUp 0
+goto L9
+label L8
+push local 0
+eq
+not
+if-goto L9
+call ship.rotateLeft 0
+goto L10
+label L9
+push local 0
+eq
+not
+if-goto L10
+call ship.rotateRight 0
+goto L11
+label L10
+call ship.flyShip 0
+goto L7
+label L8
+pop local 4
+label L11
+push local 4
+lt
+not
+if-goto L12
+push constant 0
+push local 4
+add
+add
+push constant 0
+push local 4
+add
+add
+pop pointer 1
+push that 0
+add
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 0
+push local 4
+add
+add
+push constant 0
+push local 4
+add
+add
+pop pointer 1
+push that 0
+add
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 1
+neg
+call Screen.setColor 0
+push constant 0
+push local 4
+add
+pop pointer 1
+push that 0
+push constant 0
+push local 4
+add
+add
+pop pointer 1
+push that 0
+call Screen.drawPixel 1
+push local 4
+add
+pop local 4
+goto L11
+label L12
+goto L1
+label L2
+return
