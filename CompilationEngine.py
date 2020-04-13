@@ -89,7 +89,7 @@ class CompilationEngine:
         self.compileParameterList()
         self.process('symbol', ')', advance=False)
 
-        self.vt.writeFunction(self.funcName, self.nParams)
+        self.vt.writeFunction(self.funcName, self.nParams+1)
         
         #subroutineBody
         self.compileSubroutineBody()
