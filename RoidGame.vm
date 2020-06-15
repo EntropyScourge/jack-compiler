@@ -1,211 +1,463 @@
-function new 0
-call Ship.new 1
-pop field 0
-pop field 1
+function RoidGame.new 0
+push constant 4
+call Memory.alloc 1
+pop pointer 0
+push constant 240
+push constant 110
+call Ship.new 2
+pop this 0
+push constant 0
+pop this 1
+push pointer 0
 return
-function dispose 0
-call ship.killShip 0
-call Memory.deAlloc 0
+function RoidGame.dispose 0
+push argument 0
+pop pointer 0
+push this 0
+call Ship.killShip 1
+call Memory.deAlloc 1
 return
-function run 0
-pop local 1
-call Array.new 0
-pop field 2
-pop local 3
-pop local 4
-label L0
-push local 3
-lt
-not
-if-goto L1
-push field 2
-push local 3
-add
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push local 3
-add
-pop local 3
-goto L0
-label L1
-label L1
-push local 1
-not
-not
-if-goto L2
-label L2
-push local 0
-eq
-not
-if-goto L3
-call Keyboard.keyPressed 0
-pop local 0
-call ship.flyShip 0
-goto L2
-label L3
-push local 0
-eq
-not
-if-goto L3
-push constant 1
-neg
-pop local 1
-goto L4
-label L3
-push local 0
-eq
-not
-if-goto L4
-pop local 3
-push local 2
-eq
-not
-if-goto L5
-push local 2
-push local 3
-add
-pop pointer 1
-push that 0
-eq
-not
-if-goto L6
-push field 2
-push local 3
+function RoidGame.newMissile 0
+push this 3
+push this 2
+push constant 4
+call math.multiply 2
 add
 call ship.getX 0
+push constant 8
+add
 pop temp 0
 pop pointer 1
 push temp 0
 pop that 0
-push field 2
-push local 3
+push this 3
+push this 2
+push constant 4
+call math.multiply 2
+push constant 1
 add
 add
 call ship.getY 0
+push constant 8
+add
 pop temp 0
 pop pointer 1
 push temp 0
 pop that 0
-push field 2
-push local 3
+push this 3
+push this 2
+push constant 4
+call math.multiply 2
+push constant 2
 add
 add
-call ship.getVX 0
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push field 2
-push local 3
-add
-add
-call ship.getVY 0
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push constant 1
+push constant 2
 neg
-pop local 2
-goto L7
-label L6
-goto L6
-label L5
-push local 3
+call ship.getSinTheta 0
+call math.multiply 2
+push constant 10
+call math.divide 2
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push this 3
+push this 2
+push constant 4
+call math.multiply 2
+push constant 3
 add
-pop local 3
-goto L5
-label L4
-label L7
+add
+push constant 2
+neg
+call ship.getCosTheta 0
+call math.multiply 2
+push constant 10
+call math.divide 2
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push this 2
+push constant 1
+add
+pop this 2
+return
+function RoidGame.moveMissiles 1
+push constant 0
+pop local 0
+label L0
 push local 0
+push constant 197
+lt
+not
+if-goto L1
+push local 1
+push local 0
+add
+pop pointer 1
+push that 0
 eq
 not
 not
+if-goto L1
+call Screen.setColor 1
+push local 1
+push local 0
+add
+pop pointer 1
+push that 0
+push local 1
+push local 0
+push constant 1
+add
+add
+pop pointer 1
+push that 0
+call Screen.drawPixel 2
+push local 1
+push local 0
+push constant 2
+add
+add
+pop pointer 1
+push that 0
+push constant 0
+gt
+not
+if-goto L2
+push argument 1
+push local 0
+add
+push local 1
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 1
+sub
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+goto L3
+label L2
+push local 1
+push local 0
+push constant 2
+add
+add
+pop pointer 1
+push that 0
+push constant 0
+lt
+not
+if-goto L3
+push argument 1
+push local 0
+add
+push local 1
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 1
+add
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+goto L4
+label L3
+push local 1
+push local 0
+push constant 3
+add
+add
+pop pointer 1
+push that 0
+push constant 0
+gt
+not
+if-goto L4
+push argument 1
+push local 0
+push constant 1
+add
+add
+push local 1
+push local 0
+push constant 1
+add
+add
+pop pointer 1
+push that 0
+push constant 1
+add
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+goto L5
+label L4
+push local 1
+push local 0
+push constant 3
+add
+add
+pop pointer 1
+push that 0
+push constant 0
+lt
+not
+if-goto L5
+push argument 1
+push local 0
+push constant 1
+add
+add
+push local 1
+push local 0
+push constant 1
+add
+add
+pop pointer 1
+push that 0
+push constant 1
+sub
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+goto L6
+label L5
+goto L2
+label L1
+push constant 1
+neg
+call Screen.setColor 1
+push local 1
+push local 0
+push constant 1
+add
+add
+pop pointer 1
+push that 0
+push constant 0
+eq
+not
+if-goto L6
+push argument 1
+push local 0
+push constant 1
+add
+add
+push constant 255
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+goto L7
+label L6
+push local 1
+push local 0
+push constant 1
+add
+add
+pop pointer 1
+push that 0
+push constant 255
+gt
+not
+if-goto L7
+push argument 1
+push local 0
+push constant 1
+add
+add
+push constant 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+goto L8
+label L7
+push local 1
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 510
+gt
+not
 if-goto L8
+push this 3
+push local 0
+add
+push constant 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+goto L9
+label L8
+push local 1
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 1
+lt
+not
+if-goto L9
+push this 3
+push local 0
+add
+push constant 511
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+goto L10
+label L9
+push local 1
+push local 0
+add
+pop pointer 1
+push that 0
+push local 1
+push local 0
+push constant 1
+add
+add
+pop pointer 1
+push that 0
+call Screen.drawPixel 2
+push local 0
+push constant 4
+add
+pop local 0
+goto L0
+label L1
+return
+function RoidGame.run 0
+pop local 1
+push constant 200
+call Array.new 1
+pop this 3
+push constant 0
+pop local 3
+push constant 0
+pop this 2
+label L10
+push local 3
+push constant 200
+lt
+not
+if-goto L11
+push this 3
+push local 3
+add
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 3
+push constant 1
+add
+pop local 3
+goto L10
+label L11
+label L11
+push local 1
+not
+not
+if-goto L12
+label L12
+push local 0
+push constant 0
+eq
+not
+if-goto L13
+call Keyboard.keyPressed 0
+pop local 0
+push argument 0
+pop pointer 0
+push this 0
+call Ship.flyShip 1
+push this 3
+call .moveMissiles 1
+goto L12
+label L13
+push local 0
+push constant 81
+eq
+not
+if-goto L13
+push constant 1
+neg
+pop local 1
+goto L14
+label L13
+push local 0
+push constant 32
+eq
+not
+if-goto L14
+call .newMissile 0
+goto L15
+label L14
+push local 0
+push constant 0
+eq
+not
+not
+if-goto L15
 call Keyboard.keyPressed 0
 pop local 0
 push local 0
+push constant 131
 eq
 not
-if-goto L8
-call ship.speedUp 0
-goto L9
-label L8
+if-goto L16
+push argument 0
+pop pointer 0
+push this 0
+call Ship.speedUp 1
+goto L17
+label L16
 push local 0
+push constant 130
 eq
 not
-if-goto L9
-call ship.rotateLeft 0
-goto L10
-label L9
+if-goto L17
+push argument 0
+pop pointer 0
+push this 0
+call Ship.rotateLeft 1
+goto L18
+label L17
 push local 0
+push constant 132
 eq
 not
-if-goto L10
-call ship.rotateRight 0
-goto L11
-label L10
-call ship.flyShip 0
-goto L7
-label L8
-pop local 4
-label L11
-push local 4
-lt
-not
-if-goto L12
-push constant 0
-push local 4
-add
-add
-push constant 0
-push local 4
-add
-add
-pop pointer 1
-push that 0
-add
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push constant 0
-push local 4
-add
-add
-push constant 0
-push local 4
-add
-add
-pop pointer 1
-push that 0
-add
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push constant 1
-neg
-call Screen.setColor 0
-push constant 0
-push local 4
-add
-pop pointer 1
-push that 0
-push constant 0
-push local 4
-add
-add
-pop pointer 1
-push that 0
-call Screen.drawPixel 1
-push local 4
-add
-pop local 4
+if-goto L18
+push argument 0
+pop pointer 0
+push this 0
+call Ship.rotateRight 1
+goto L19
+label L18
+push argument 0
+pop pointer 0
+push this 0
+call Ship.flyShip 1
+push this 3
+call .moveMissiles 1
+goto L16
+label L15
+push constant 200
+call Sys.wait 1
 goto L11
 label L12
-goto L1
-label L2
 return

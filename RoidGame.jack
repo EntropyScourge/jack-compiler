@@ -1,6 +1,6 @@
 class RoidGame {
     field Ship ship;
-    field int direction;
+    field int direction, numMissiles;
     field Array missiles;
 
     constructor RoidGame new() {
@@ -15,15 +15,50 @@ class RoidGame {
         return;
     }
 
+    method void newMissile() {
+        let missiles[(numMissiles*4)] = ship.getX()+8;
+        let missiles[(numMissiles*4)+1] = ship.getY()+8;
+        let missiles[(numMissiles*4)+2] = -2*(ship.getSinTheta())/10;
+        let missiles[(numMissiles*4)+3] = -2*(ship.getCosTheta())/10;
+        let numMissiles = numMissiles + 1;
+        return;
+    }
+
+    method void moveMissiles(Array missiles_) {
+        var int j;
+        let j = 0;
+            while (j < 197) {
+                if (~(missiles_[j] = false)){
+                    do Screen.setColor(false);
+                    do Screen.drawPixel(missiles_[j], missiles_[j+1]);
+                    if (missiles_[j+2] > 0) {let missiles_[j] = missiles_[j] - 1;}//missiles[j+2]);}
+                    if (missiles_[j+2] < 0) {let missiles_[j] = missiles_[j] + 1;}//missiles[j+2]);}   
+                    if (missiles_[j+3] > 0) {let missiles_[j+1] = missiles_[j+1] + 1;}//(missiles[j+3]);}
+                    if (missiles_[j+3] < 0) {let missiles_[j+1] = missiles_[j+1] - 1;}//(missiles[j+3]);}
+                }
+                do Screen.setColor(true);
+                if (missiles_[j+1] = 0) {let missiles_[j+1] = 255;}
+                if (missiles_[j+1] > 255) {let missiles_[j+1] = 0;}
+                //if (missiles_[j] = 511) {let missiles[j] = 0;}
+                if (missiles_[j] > 510) {let missiles[j] = 1;}
+                if (missiles_[j] < 1) {let missiles[j] = 511;}
+                //do Output.printInt(missiles_[j+1]);
+                do Screen.drawPixel(missiles_[j], missiles_[j+1]);
+                let j = j + 4;
+            }
+            return;
+        }
+
+
     method void run() {
         var char key;
         var boolean exit, fired;
-        var int i , j;
+        var int i;
         let exit = false;
-        let missiles = Array.new(20);
+        let missiles = Array.new(200);
         let i = 0;
-        let j = 0;
-        while (i < 20) {
+        let numMissiles = 0;
+        while (i < 200) {
             let missiles[i] = false;
             let i = i + 1;
         }
@@ -32,38 +67,21 @@ class RoidGame {
             while (key = 0) {
                 let key = Keyboard.keyPressed();
                 do ship.flyShip();
+                do moveMissiles(missiles);
             }
             if (key = 81) {let exit = true; }
-            if (key = 32) {
-                let i = 0;
-                if (fired = false) {
-                    if (missiles[i] = false) {
-                        let missiles[i] = ship.getX();
-                        let missiles[i+1] = ship.getY();
-                        let missiles[i+2] = ship.getVX();
-                        let missiles[i+3] = ship.getVY();
-                        let fired = true;
-                    }
-                }
-                let i = i + 4;
-            }
+            if (key = 32) {do newMissile();}
 
-            while (~(key = 0)) {
+            if (~(key = 0)) {
                 let key = Keyboard.keyPressed();
                 if (key = 131) {do ship.speedUp(); }
                 if (key = 130) {do ship.rotateLeft(); }
                 if (key = 132) {do ship.rotateRight(); }
                 do ship.flyShip();
+                do moveMissiles(missiles);
             }
-            let j = 0;
-            while (j < 17) {
-                let missile[j+2] = missile[j+2] + 1;
-                let missile[j+3] = missile[j+3] + 1;
-                do Screen.setColor(true);
-                do Screen.drawPixel(missile[j], missile[j+1]);
-                let j = j + 4;
-            }
+            do Sys.wait(200);            
         }
-        return;
+    return;
     }
 }

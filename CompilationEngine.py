@@ -76,20 +76,29 @@ class CompilationEngine:
 
         #subroutine keyword
         self.process('keyword', ['constructor', 'function', 'method'], advance=False)
+        subRoutineType = self.tk.keyword()
 
         #type declaration
         self.process(['keyword', 'identifier'], ['void', 'int', 'char', 'boolean'])
         
         #subroutineName
         self.process('identifier', kind='subroutine')
-        self.funcName = self.tk.identifier()
+        self.funcName = self.className + "." + self.tk.identifier()
         
         # ( parameterList )
         self.process('symbol', '(')
-        self.compileParameterList()
+        self.compileParameterList(subRoutineType)
         self.process('symbol', ')', advance=False)
 
-        self.vt.writeFunction(self.funcName, self.nParams+1)
+        self.vt.writeFunction(self.funcName, 
+        {'constructor': 0, 
+         'method': self.st.VarCount('argument') - 1, 
+         'function': self.st.VarCount('argument')}[subRoutineType])
+
+        if subRoutineType == 'constructor':
+            self.vt.writePush('constant', self.st.VarCount('field'))
+            self.vt.writeCall('Memory.alloc', 1)
+            self.vt.writePop('pointer', 0)
         
         #subroutineBody
         self.compileSubroutineBody()
@@ -97,8 +106,10 @@ class CompilationEngine:
         self.removeIndent()
         self.outputString += self.indent + '</subroutineDec>\n'
 
-    def compileParameterList(self):
+    def compileParameterList(self, subRoutineType):
         self.st.startSubroutine()
+        if subRoutineType == 'method':
+            self.st.define('this', self.className, 'argument')
         self.outputString += self. indent + '<parameterList>\n'
         self.addIndent()
         self.tk.advance()
@@ -114,8 +125,6 @@ class CompilationEngine:
                 self.process('identifier', kind='argument')
                 self.nParams += 1
                 self.tk.advance()
-        else:
-            self.nParams = 0
                 
         self.removeIndent()
         self.outputString += self.indent + '</parameterList>\n'
@@ -251,7 +260,7 @@ class CompilationEngine:
         self.outputString += self.indent + '<doStatement>\n'
         self.addIndent()
         
-        self.className = ''
+        className = ''
         self.process('keyword', 'do', advance=False)
         self.process('identifier', ' a class or subroutine name', kind='subroutine', xmlOut=False)
         self.process('symbol', ['(','.'], xmlOut=False)
@@ -261,13 +270,19 @@ class CompilationEngine:
             funcName = self.tk.previousToken()
             self.compileExpressionList()
         elif self.tk.symbol() == '.':
-            className = self.tk.previousToken() + '.'
+            className = self.tk.previousToken()
             self.process('identifier', 'a subroutine name', kind='subroutine')
             funcName = self.tk.identifier()
             self.process('symbol', '(')
             self.compileExpressionList()
         self.process('symbol', ')', advance=False)
-        self.vt.writeCall(className + funcName, str(self.nArgs))
+        if className in self.st.classTable or className in self.st.subRoutineTable:
+            className = self.st.TypeOf(className)
+            self.vt.writePush('argument', 0)
+            self.vt.writePop('pointer', 0)
+            self.vt.writePush('this', 0)
+            self.nArgs += 1
+        self.vt.writeCall(className + '.' + funcName, str(self.nArgs))
         self.process('symbol', ';')
         self.tk.advance()
         
@@ -280,7 +295,10 @@ class CompilationEngine:
         
         self.process('keyword', 'return', advance=False)
         self.tk.advance()
-        if not (self.tk.tokenType() == 'symbol' and self.tk.symbol() == ';'):
+        if self.tk.keyword() == 'this':
+            self.vt.writePush('pointer', 0)
+            self.tk.advance()
+        elif not (self.tk.tokenType() == 'symbol' and self.tk.symbol() == ';'):
             self.compileExpression(False)
         self.vt.writeReturn()
         self.process('symbol', ';', advance=False)
@@ -302,7 +320,7 @@ class CompilationEngine:
                 op = self.tk.symbol()
                 self.compileTerm()
                 if op in ['*', '/']:
-                    self.vt.writeCall({'*':'math.mult', '/':'math.div'}[op], 2)
+                    self.vt.writeCall({'*':'math.multiply', '/':'math.divide'}[op], 2)
                 else:
                     self.vt.WriteArithmetic(self.opDict[op])
                 if self.tk.symbol() not in ['+', '-', '*', '/', '&', '|', '<', '>', '=']:
@@ -319,6 +337,13 @@ class CompilationEngine:
         self.process(['integerConstant', 'stringConstant', 'keyword', 'identifier', 'symbol'], ['true', 'false', 'null', 'this', '(', '-', '~'], advance=advance, xmlOut=False)
         if self.tk.tokenType() is not 'identifier':
             self.outputString += self.indent + '<'+self.tk.tokenType() + '>' + self.tk.currentToken + '</' + self.tk.tokenType()+ '>\n'
+        if self.tk.tokenType() == 'integerConstant':
+            self.vt.writePush('constant', self.tk.intVal())
+        if self.tk.tokenType() == 'stringConstant':
+            for i in self.tk.stringVal():
+                self.vt.writePush('constant', ord(self.tk.stringVal()[i]))
+                if i == 0: self.vt.writeCall('String.new', 1)
+                else: self.vt.writeCall('String.append', 2)
         if self.tk.tokenType() == 'keyword':
             if self.tk.keyword() in ['false' 'null']:
                 self.vt.writePush('constant', 0)
@@ -352,7 +377,7 @@ class CompilationEngine:
             else:
                 if self.tk.symbol() == '(':
                     self.outputString += self.indent + '<identifier kind=subroutine>' + self.tk.previousToken() + '</identifier>\n'
-                    funcName = self.tk.identifier()
+                    funcName = self.className + '.' + self.tk.identifier()
                     self.process('symbol', '(', advance=False)
                     self.compileExpressionList()
                     print(self.tk.previousToken())
@@ -367,7 +392,7 @@ class CompilationEngine:
                     self.compileExpressionList()
                     print(self.tk.previousToken())
                     self.process('symbol', ')', advance=False)
-                self.vt.writeCall(className + funcName, str(self.nArgs))
+                self.vt.writeCall(className + funcName, self.nArgs)
             self.tk.advance()
         elif previousTokenType is 'identifier':
             self.vt.writePush(self.st.KindOf(self.tk.previousToken()), str(self.st.IndexOf(self.tk.previousToken())))
@@ -383,6 +408,7 @@ class CompilationEngine:
         self.tk.advance()
         if self.tk.symbol() != ')':
             self.compileExpression(False)
+            self.nArgs = 1
             while self.tk.symbol() == ',':
                 self.process('symbol', ',', advance=False)
                 self.compileExpression()

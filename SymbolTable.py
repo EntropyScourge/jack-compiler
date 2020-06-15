@@ -7,8 +7,6 @@ class SymbolTable:
 
     def startSubroutine(self):
         self.subRoutineTable = {}
-        self.indices['field'] = 0
-        self.indices['static'] = 0
         self.indices['local'] = 0
         self.indices['argument'] = 0
 

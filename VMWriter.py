@@ -7,9 +7,13 @@ class VMWriter:
         if index is None:
             segment = 'constant'
             index = 0
+        if segment == 'field':
+            segment = 'this'
         self.output.append('push ' + segment + ' ' + str(index))
 
     def writePop(self, segment, index):
+        if segment == 'field':
+            segment = 'this'
         self.output.append('pop ' + segment + ' ' + str(index))
 
     def WriteArithmetic(self, command):
