@@ -62,7 +62,7 @@ class CompilationEngine:
         VarType = self.tk.currentToken
         
         #variable declarations
-        while self.tk.symbol() != ';':
+        while not (self.tk.tokenType() == 'symbol' and self.tk.symbol() == ';'):
             self.process('identifier', kind=kind, varType=VarType)
             self.process('symbol',[',', ';'])
         self.tk.advance()
@@ -426,6 +426,7 @@ class CompilationEngine:
     def checkType(self, expectedTypes, message):
         if self.tk.tokenType() not in expectedTypes:
             print(self.outputString)
+            print(self.tk.currentToken, self.tk.currentID)
             raise TypeError(message)
         else:
             pass
@@ -453,7 +454,7 @@ class CompilationEngine:
             if kind in ['field', 'static', 'local', 'argument']:
                 xmlAttr += ' index=' + str(self.st.IndexOf(self.tk.identifier()))
         if xmlOut:
-            if self.tk.symbol() in self.XMLSymDict:
+            if self.tk.currentToken in self.XMLSymDict:
                 self.outputString += self.indent + '<'+self.tk.tokenType()+ xmlAttr +'>'+self.XMLSymDict[token]+'</'+self.tk.tokenType()+'>\n'
             else:
                 self.outputString += self.indent + '<'+self.tk.tokenType()+ xmlAttr + '>'+token+'</'+self.tk.tokenType()+'>\n'

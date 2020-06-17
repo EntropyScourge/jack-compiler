@@ -15,4 +15,5 @@ else:
     source.compileClass()
     print('Current token is ', source.tk.currentToken)
     source.writeOutput()
-    
+if len(sys.argv) > 3:
+    if sys.argv[2] == 'xml': print(source.outputString)
