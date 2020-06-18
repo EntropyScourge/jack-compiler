@@ -20,6 +20,7 @@ class CompilationEngine:
         self.indent = ''
         self.nArgs = 0
         self.nLabels = 0
+        self.voidMethod = False
 
     def compileClass(self): # 'class' className '{' classVarDec* subroutineDec* '}'
         #self.outputString += '<tokens>\n'
@@ -99,6 +100,9 @@ class CompilationEngine:
             self.vt.writePush('constant', self.st.VarCount('field'))
             self.vt.writeCall('Memory.alloc', 1)
             self.vt.writePop('pointer', 0)
+
+        if self.tk.keyword() == 'void': self.voidMethod = True
+        else: self.voidMethod = False
         
         #subroutineBody
         self.compileSubroutineBody()
@@ -256,7 +260,7 @@ class CompilationEngine:
         self.removeIndent()
         self.outputString += self.indent + '</whileStatement>\n'
 
-    def compileDo(self):
+    def compileDo(self, *args):
         self.outputString += self.indent + '<doStatement>\n'
         self.addIndent()
         
@@ -283,6 +287,7 @@ class CompilationEngine:
             self.vt.writePush('this', 0)
             self.nArgs += 1
         self.vt.writeCall(className + '.' + funcName, str(self.nArgs))
+        if self.voidMethod: self.vt.writePop('temp', 0)
         self.process('symbol', ';')
         self.tk.advance()
         
@@ -300,6 +305,8 @@ class CompilationEngine:
             self.tk.advance()
         elif not (self.tk.tokenType() == 'symbol' and self.tk.symbol() == ';'):
             self.compileExpression(False)
+        else:
+            self.vt.writePush('constant', 0)
         self.vt.writeReturn()
         self.process('symbol', ';', advance=False)
         self.tk.advance()
@@ -350,6 +357,7 @@ class CompilationEngine:
             if self.tk.keyword() == 'true':
                 self.vt.writePush('constant', 1)
                 self.vt.WriteArithmetic('NEG')
+            if self.tk.keyword() == 'this': self.vt.writePush('pointer', 0)
             self.tk.advance()
         if self.tk.tokenType() == 'symbol':
             previousTokenType = self.tk.tokenType()
