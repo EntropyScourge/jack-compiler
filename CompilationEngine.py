@@ -395,7 +395,7 @@ class CompilationEngine:
         if self.tk.tokenType() == 'symbol' and self.tk.symbol() in ['[', '(', '.']:
             if self.tk.symbol() == '[':
                 self.outputString += self.indent + '<identifier kind=Array>' + self.tk.previousToken() + '</identifier>\n'
-                self.vt.writePush('local', self.st.IndexOf(self.tk.previousToken()))
+                self.vt.writePush(self.st.KindOf(self.tk.identifier()), self.st.IndexOf(self.tk.identifier()))
                 self.process('symbol', '[', advance=False)
                 self.compileExpression()
                 self.vt.WriteArithmetic('ADD')
