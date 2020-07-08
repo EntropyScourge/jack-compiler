@@ -58,7 +58,7 @@ class JackTokenizer:
                         self.currentToken = word
                         self.currentID = 'stringConstant'
                         done = True
-                        self._stringVal = self.currentTokenp[1:-1]
+                        self._stringVal = self.currentToken[1:-1]
                 elif not inString:
                     if self.jackInput[self.currentPos+i+1] == ' ' or self.jackInput[self.currentPos+i+1] in self.symbols:
                         Word = word.replace('\n','')

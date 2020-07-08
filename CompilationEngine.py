@@ -19,7 +19,6 @@ class CompilationEngine:
         self.multiTermExpression = False
         self.indent = ''
         self.nArgs = 0
-        self.nLabels = 0
         self.voidMethod = False
 
     def compileClass(self): # 'class' className '{' classVarDec* subroutineDec* '}'
@@ -47,7 +46,6 @@ class CompilationEngine:
         self.removeIndent()
         self.outputString += self.indent + '</class>\n'
         #self.outputString += '</tokens>\n'
-        #print(self.outputString)
 
     def compileClassVarDec(self, advance=False): # ('static'|'field') type varName (',' varName )* ';'
         
@@ -72,6 +70,9 @@ class CompilationEngine:
         self.outputString += self.indent + '</classVarDec>\n'
         
     def compileSubroutineDec(self): # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
+        self.ifLabels = 0
+        self.whileLabels = 0
+        
         self.outputString += self.indent + '<subroutineDec>\n'
         self.addIndent()
 
@@ -91,21 +92,11 @@ class CompilationEngine:
         self.compileParameterList(subRoutineType)
         self.process('symbol', ')', advance=False)
 
-        self.vt.writeFunction(self.funcName, 
-        {'constructor': 0, 
-         'method': self.st.VarCount('argument') - 1, 
-         'function': self.st.VarCount('argument')}[subRoutineType])
-
-        if subRoutineType == 'constructor':
-            self.vt.writePush('constant', self.st.VarCount('field'))
-            self.vt.writeCall('Memory.alloc', 1)
-            self.vt.writePop('pointer', 0)
-
         if self.tk.keyword() == 'void': self.voidMethod = True
         else: self.voidMethod = False
         
         #subroutineBody
-        self.compileSubroutineBody()
+        self.compileSubroutineBody(subRoutineType)
         
         self.removeIndent()
         self.outputString += self.indent + '</subroutineDec>\n'
@@ -114,34 +105,46 @@ class CompilationEngine:
         self.st.startSubroutine()
         if subRoutineType == 'method':
             self.st.define('this', self.className, 'argument')
-        self.outputString += self. indent + '<parameterList>\n'
+        self.outputString += self.indent + '<parameterList>\n'
         self.addIndent()
         self.tk.advance()
-        self.nParams = 0
+        nParams = 0
         if self.tk.symbol() != ')':
             self.process(['keyword', 'identifier'], ['int', 'char', 'boolean'], advance=False)
             self.process('identifier', kind='argument')
-            self.nParams = 1
+            nParams = 1
             self.tk.advance()
             while not (self.tk.tokenType() == 'symbol' and self.tk.symbol() == ')'):
                 self.process('symbol', ',', advance=False)
                 self.process(['keyword', 'identifier'], ['int', 'char', 'boolean'], kind='object')
                 self.process('identifier', kind='argument')
-                self.nParams += 1
+                nParams += 1
                 self.tk.advance()
                 
         self.removeIndent()
         self.outputString += self.indent + '</parameterList>\n'
         
-    def compileSubroutineBody(self):
+    def compileSubroutineBody(self, subRoutineType):
         self.outputString += self.indent + '<subroutineBody>\n'
         self.addIndent()
         
         self.process('symbol', '{')
-        self.tk.advance()   
+        self.tk.advance()
+        self.nVars = 0
         while self.tk.tokenType() == 'keyword' and self.tk.keyword() == 'var':
             self.compileVarDec()
             self.tk.advance()
+
+        self.vt.writeFunction(self.funcName, self.nVars)
+
+        if subRoutineType == 'constructor':
+            self.vt.writePush('constant', self.st.VarCount('field'))
+            self.vt.writeCall('Memory.alloc', 1)
+            self.vt.writePop('pointer', 0)
+        elif subRoutineType == 'method':
+            self.vt.writePush('argument', 0)
+            self.vt.writePop('pointer', 0)
+        
         self.compileStatements()
         self.process('symbol','}', advance=False)
         self.tk.advance()
@@ -157,6 +160,7 @@ class CompilationEngine:
         self.process(['keyword', 'identifier'], ['int', 'char', 'boolean'], kind='class')
         while True:
             self.process('identifier', kind='local')
+            self.nVars += 1
             self.process('symbol', [',', ';'])
             if self.tk.tokenType() == 'symbol' and self.tk.symbol() == ';':
                 break
@@ -210,20 +214,25 @@ class CompilationEngine:
         self.process('symbol', '(', advance=True)
         self.compileExpression()
         self.vt.WriteArithmetic('NOT')
-        Label1 = 'L' + str(self.nLabels)
+        Label1 = 'IF_TRUE' + str(self.ifLabels)
         self.vt.WriteIf(Label1)
-        self.nLabels += 1
-        Label2 = 'L' + str(self.nLabels)
+        Label2 = 'IF_FALSE' + str(self.ifLabels)
+        #self.vt.WriteGoto(Label2)
+        #Label3 = 'IF_END' + str(self.ifLabels)
+        self.ifLabels += 1
         self.process('symbol', ')', advance=False)
         self.process('symbol', '{')
         self.tk.advance()
+        #self.vt.WriteLabel(Label1)
         self.compileStatements()
-        self.vt.WriteGoto(Label2)
-        self.vt.WriteLabel(Label1)
+        #self.vt.WriteGoto(Label3)
         self.process('symbol', '}',advance=False)
         self.tk.advance()
         self.checkType(['keyword','symbol'], 'expected an else or another statement')
+        #self.vt.WriteLabel(Label2)
         if self.tk.tokenType() == 'keyword' and self.tk.keyword() == 'else':
+            self.vt.WriteGoto(Label2)
+            self.vt.WriteLabel(Label1)
             self.outputString += self.indent + '<keyword> else </keyword>\n'
             self.process('symbol', '{')
             self.tk.advance()
@@ -231,6 +240,8 @@ class CompilationEngine:
             self.vt.WriteLabel(Label2)
             self.process('symbol', '}', advance=False)
             self.tk.advance()
+        else: self.vt.WriteLabel(Label1)
+        #self.vt.WriteLabel(Label3)
             
         self.removeIndent()
         self.outputString += self.indent + '</ifStatement>\n'
@@ -241,10 +252,10 @@ class CompilationEngine:
         
         self.outputString += self.indent + '<keyword> while </keyword>\n'
         self.process('symbol', '(')
-        Label1 = 'L' + str(self.nLabels)
+        Label1 = 'WHILE_EXP' + str(self.whileLabels)
         self.vt.WriteLabel(Label1)
-        self.nLabels += 1
-        Label2 = 'L' + str(self.nLabels)
+        Label2 = 'WHILE_END' + str(self.whileLabels)
+        self.whileLabels += 1
         self.compileExpression()
         self.vt.WriteArithmetic('NOT')
         self.vt.WriteIf(Label2)
@@ -264,35 +275,43 @@ class CompilationEngine:
         self.outputString += self.indent + '<doStatement>\n'
         self.addIndent()
         
-        className = ''
         self.process('keyword', 'do', advance=False)
         self.process('identifier', ' a class or subroutine name', kind='subroutine', xmlOut=False)
         self.process('symbol', ['(','.'], xmlOut=False)
+        if self.tk.symbol() == '.':
+            objectName = self.tk.identifier()
+            className = self.st.TypeOf(objectName)
+            if className == None: className = objectName
+            else: self.vt.writePush(self.st.KindOf(objectName), self.st.IndexOf(objectName))
+        else:
+            className = self.className
+            objectName = None
         self.outputString += self.indent + '<identifier kind=' + {'(':'subroutine', '.':'class'}[self.tk.symbol()] + '>' + self.tk.previousToken() + '</identifier>\n'
         self.outputString += self.indent + '<symbol>' + self.tk.symbol() + '</symbol>\n'
-        if self.tk.symbol() == '(':
-            funcName = self.tk.previousToken()
-            self.compileExpressionList()
-        elif self.tk.symbol() == '.':
-            className = self.tk.previousToken()
-            self.process('identifier', 'a subroutine name', kind='subroutine')
-            funcName = self.tk.identifier()
-            self.process('symbol', '(')
-            self.compileExpressionList()
-        self.process('symbol', ')', advance=False)
-        if className in self.st.classTable or className in self.st.subRoutineTable:
-            className = self.st.TypeOf(className)
-            self.vt.writePush('argument', 0)
-            self.vt.writePop('pointer', 0)
-            self.vt.writePush('this', 0)
-            self.nArgs += 1
-        self.vt.writeCall(className + '.' + funcName, str(self.nArgs))
-        if self.voidMethod: self.vt.writePop('temp', 0)
+        self.compileCall(True, className, objectName)
+        self.vt.writePop('temp', 0)
         self.process('symbol', ';')
         self.tk.advance()
         
         self.removeIndent()
         self.outputString += self.indent + '</doStatement>\n'
+
+    def compileCall(self, advance, className, objectName):
+        self.nArgs = 0
+        if self.tk.symbol() == '(':
+            funcName = self.tk.previousToken()
+            self.vt.writePush('pointer', 0)
+            self.compileExpressionList()
+            self.nArgs += 1
+        elif self.tk.symbol() == '.':
+            self.process('identifier', 'a subroutine name', kind='subroutine')
+            funcName = self.tk.identifier()
+            self.process('symbol', '(')
+            self.compileExpressionList()
+        self.process('symbol', ')', advance=False)
+        if objectName in self.st.classTable or objectName in self.st.subRoutineTable:
+            self.nArgs += 1
+        self.vt.writeCall(className + '.' + funcName, str(self.nArgs))
 
     def compileReturn(self):
         self.outputString += self.indent + '<returnStatement>\n'
@@ -327,7 +346,7 @@ class CompilationEngine:
                 op = self.tk.symbol()
                 self.compileTerm()
                 if op in ['*', '/']:
-                    self.vt.writeCall({'*':'math.multiply', '/':'math.divide'}[op], 2)
+                    self.vt.writeCall({'*':'Math.multiply', '/':'Math.divide'}[op], 2)
                 else:
                     self.vt.WriteArithmetic(self.opDict[op])
                 if self.tk.symbol() not in ['+', '-', '*', '/', '&', '|', '<', '>', '=']:
@@ -347,12 +366,13 @@ class CompilationEngine:
         if self.tk.tokenType() == 'integerConstant':
             self.vt.writePush('constant', self.tk.intVal())
         if self.tk.tokenType() == 'stringConstant':
-            for i in self.tk.stringVal():
+            self.vt.writePush('constant', len(self.tk.stringVal()))
+            self.vt.writeCall('String.new', 1)
+            for i in range(len(self.tk.stringVal())):
                 self.vt.writePush('constant', ord(self.tk.stringVal()[i]))
-                if i == 0: self.vt.writeCall('String.new', 1)
-                else: self.vt.writeCall('String.append', 2)
+                self.vt.writeCall('String.appendChar', 2)
         if self.tk.tokenType() == 'keyword':
-            if self.tk.keyword() in ['false' 'null']:
+            if self.tk.keyword() in ['false','null']:
                 self.vt.writePush('constant', 0)
             if self.tk.keyword() == 'true':
                 self.vt.writePush('constant', 1)
@@ -383,24 +403,16 @@ class CompilationEngine:
                 self.vt.writePush('that', '0')
                 self.process('symbol', ']', advance=False)
             else:
-                if self.tk.symbol() == '(':
-                    self.outputString += self.indent + '<identifier kind=subroutine>' + self.tk.previousToken() + '</identifier>\n'
-                    funcName = self.className + '.' + self.tk.identifier()
-                    self.process('symbol', '(', advance=False)
-                    self.compileExpressionList()
-                    print(self.tk.previousToken())
-                    self.process('symbol', ')', advance=False)
-                elif self.tk.symbol() == '.':
-                    className = self.tk.previousToken() + '.'
-                    self.outputString += self.indent + '<identifier kind=class>' + self.tk.previousToken() + '</identifier>\n'
-                    self.process('symbol', '.', advance=False)
-                    self.process('identifier', kind='subroutine')
-                    funcName = self.tk.identifier()
-                    self.process('symbol', '(')
-                    self.compileExpressionList()
-                    print(self.tk.previousToken())
-                    self.process('symbol', ')', advance=False)
-                self.vt.writeCall(className + funcName, self.nArgs)
+                if self.tk.symbol() == '.':
+                    objectName = self.tk.identifier()
+                    className = self.st.TypeOf(objectName)
+                    if objectName in self.st.classTable or objectName in self.st.subRoutineTable:
+                        self.vt.writePush(self.st.KindOf(objectName), self.st.IndexOf(objectName))
+                    if className is None: className = objectName
+                else:
+                    objectName = None
+                    className = self.className
+                self.compileCall(True, className, objectName)
             self.tk.advance()
         elif previousTokenType is 'identifier':
             self.vt.writePush(self.st.KindOf(self.tk.previousToken()), str(self.st.IndexOf(self.tk.previousToken())))
@@ -412,7 +424,6 @@ class CompilationEngine:
         self.outputString += self.indent + '<expressionList>\n'
         self.addIndent()
         
-        self.nArgs = 0
         self.tk.advance()
         if self.tk.symbol() != ')':
             self.compileExpression(False)
@@ -445,7 +456,7 @@ class CompilationEngine:
     def removeIndent(self):
         self.indent = self.indent[:len(self.indent)-2]
 
-    def process(self, expectedTypes, expectedTokens='', kind = None, varType=None, advance=True, xmlOut = True):
+    def process(self, expectedTypes, expectedTokens='', kind = None, varType='None', advance=True, xmlOut = True):
         xmlAttr = ''
         if advance:
             self.tk.advance()
@@ -455,12 +466,14 @@ class CompilationEngine:
             self.checkToken(token, expectedTokens, 'Expected '+' or '.join(expectedTokens) + ', got ' + self.tk.currentToken + ' instead')
         elif self.tk.tokenType() == 'identifier':
             if self.st.KindOf(self.tk.identifier()) is None:
-                self.st.define(self.tk.identifier(), varType=varType, kind=kind)
+                self.st.define(self.tk.identifier(), varType=self.tk.previousToken(), kind=kind)
             else:
                 kind = self.st.KindOf(self.tk.identifier())
             if kind is not None: xmlAttr = ' kind=' + kind
             if kind in ['field', 'static', 'local', 'argument']:
                 xmlAttr += ' index=' + str(self.st.IndexOf(self.tk.identifier()))
+            if varType is None:
+                varType = self.tk.identifier()
         if xmlOut:
             if self.tk.currentToken in self.XMLSymDict:
                 self.outputString += self.indent + '<'+self.tk.tokenType()+ xmlAttr +'>'+self.XMLSymDict[token]+'</'+self.tk.tokenType()+'>\n'

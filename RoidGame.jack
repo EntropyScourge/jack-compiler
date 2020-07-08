@@ -15,12 +15,17 @@ class RoidGame {
         return;
     }
 
-    method void newMissile() {
-        let missiles[(numMissiles*4)] = ship.getX()+8;
-        let missiles[(numMissiles*4)+1] = ship.getY()+8;
-        let missiles[(numMissiles*4)+2] = -2*(ship.getSinTheta())/10;
-        let missiles[(numMissiles*4)+3] = -2*(ship.getCosTheta())/10;
+    method void newMissile(int mX, int mY, Array missiles_) {
+        let missiles_[(numMissiles*4)] = mX;
+        let missiles_[(numMissiles*4)+1] = mY;
+        let missiles_[(numMissiles*4)+2] = -2*(ship.getSinTheta());
+        let missiles_[(numMissiles*4)+3] = -2*(ship.getCosTheta());
         let numMissiles = numMissiles + 1;
+        do Output.printInt(ship.getX());
+        do Output.printChar(",");
+        do Output.printInt(ship.getY());
+        do Output.printChar(",");
+        do Output.println();
         return;
     }
 
@@ -40,8 +45,8 @@ class RoidGame {
                 if (missiles_[j+1] = 0) {let missiles_[j+1] = 255;}
                 if (missiles_[j+1] > 255) {let missiles_[j+1] = 0;}
                 //if (missiles_[j] = 511) {let missiles[j] = 0;}
-                if (missiles_[j] > 510) {let missiles[j] = 1;}
-                if (missiles_[j] < 1) {let missiles[j] = 511;}
+                if (missiles_[j] > 510) {let missiles_[j] = 1;}
+                if (missiles_[j] < 1) {let missiles_[j] = 510;}
                 //do Output.printInt(missiles_[j+1]);
                 do Screen.drawPixel(missiles_[j], missiles_[j+1]);
                 let j = j + 4;
@@ -64,23 +69,22 @@ class RoidGame {
         }
     
         while (~exit) {
-            while (key = 0) {
+            if (key = 0) {
                 let key = Keyboard.keyPressed();
-                do ship.flyShip();
-                do moveMissiles(missiles);
             }
             if (key = 81) {let exit = true; }
-            if (key = 32) {do newMissile();}
+            if (key = 32) {do newMissile(ship.getX(), ship.getY(), missiles);}
 
             if (~(key = 0)) {
                 let key = Keyboard.keyPressed();
                 if (key = 131) {do ship.speedUp(); }
                 if (key = 130) {do ship.rotateLeft(); }
                 if (key = 132) {do ship.rotateRight(); }
-                do ship.flyShip();
-                do moveMissiles(missiles);
             }
-            do Sys.wait(200);            
+
+            do moveMissiles(missiles);
+            do ship.flyShip();
+            do Sys.wait(60);            
         }
     return;
     }
